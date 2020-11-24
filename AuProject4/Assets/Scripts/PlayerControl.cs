@@ -9,63 +9,36 @@ public class PlayerControl : MonoBehaviour
     public float jumpHeight;
     public float gravity;
 
-    //public float dashDistance;
-    //public Slider dashFill;
-    //public float Timer;
-    //public GameObject dashButton;
-    //public Sprite upSprite;
-    //public Sprite downSprite;
-
     public CharacterController controller;
-    //public Animator anim;
+    public Animator anim;
     Vector3 playerVelocity;
     bool canJump;
-    //bool canDash;
-    //bool dashing;
+
+    private bool autoLock = false;
+    public float proximityAwareness;
+    public float visionRange;
+    RaycastHit hitInfo;
+    int currentTarget = 0;
+
+    public Camera playerCam;
+    public GameObject playerEyes;
 
     // Start is called before the first frame update
     void Start()
     {
-        //canDash = true;
-        //dashing = false;
+
     }
 
     // Update is called once per frame
     void Update()
     {
         PlayerMovement();
-
-        /*if (dashing)
-            Dash();
-
-        if (dashFill.value < 1)
-            dashFill.value += Time.deltaTime * Timer;
-        else
-        {
-            dashButton.GetComponent<Image>().sprite = upSprite;
-            dashButton.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Shift";
-            canDash = true;
-        }
-
-        if (Input.GetKeyDown(KeyCode.Mouse0))
-        {
-            anim.SetTrigger("Shoot");
-            //PlayerShoot();
-        }*/
+        AutoLock();
     }
 
     void PlayerMovement()
     {
         canJump = controller.isGrounded;
-
-        //Dash control
-       /* if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
-        {
-            anim.SetTrigger("Dash");
-            dashing = true;
-            dashButton.GetComponent<Image>().sprite = downSprite;
-            dashButton.transform.GetChild(0).gameObject.GetComponent<Text>().text = "Wait";
-        }*/
 
         if (canJump && playerVelocity.y < 0)
         {
@@ -75,10 +48,10 @@ public class PlayerControl : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        /*if (x != 0 || z != 0)
+        if (x != 0 || z != 0)
             anim.SetBool("Moving", true);
         else
-            anim.SetBool("Moving", false);*/
+            anim.SetBool("Moving", false);
 
         Vector3 move = transform.right * x + transform.forward * z;
 
@@ -91,43 +64,97 @@ public class PlayerControl : MonoBehaviour
             playerVelocity.y = jumpHeight;
         }
 
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            anim.SetTrigger("Attack1Trigger");
+        }
+
 
         playerVelocity.y += gravity * Time.deltaTime;
 
         controller.Move(playerVelocity * Time.deltaTime);
     }
 
-   /* void PlayerShoot()          //Handles player shooting -- called during animation event
+    private void AutoLock()
     {
-        Debug.Log("shoot");
-
-        Rigidbody clone;
-        Vector3 startPosition;
-
-        startPosition = Camera.main.ScreenToWorldPoint(crossHairs.position);
-
-        clone = Instantiate(projectile, startPosition + Camera.main.transform.forward, Camera.main.transform.rotation);
-
-        clone.transform.Rotate(0f, 90f, 0f);
-        clone.velocity = Camera.main.transform.forward * shootSpeed;
-        soundManager.Fire();
-    }
-
-    void Dash()
-    {
-        Vector3 dash = Camera.main.transform.forward * dashDistance;
-        dash.y = 0f;
-        controller.Move(dash * Time.deltaTime);
-
-        dashFill.value -= Time.deltaTime * 2;
-
-        canDash = false;
-
-        if (dashFill.value == 0)
+        if (Input.GetMouseButtonDown(0))
         {
-            dashing = false;
-            anim.SetBool("Moving", false);
+            //Debug.Log(autoLock);
+            if (autoLock)
+            {
+                autoLock = false;
+                RemoveLock();
+            }
+             else
+                autoLock = true;
         }
 
-    }*/
+        if (autoLock)
+        {
+            List<Transform> nearbyEnemies = CheckCollisions();
+
+            if (nearbyEnemies.Count != 0)
+            {
+                SetLockTo(nearbyEnemies[currentTarget]);
+
+                if (Input.GetKeyDown(KeyCode.Q))
+                {
+                    currentTarget = (currentTarget + 1) % nearbyEnemies.Count;
+                }
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    if (currentTarget == 0)
+                        currentTarget = nearbyEnemies.Count - 1;
+                    else
+                        currentTarget--;
+                }
+                // Debug.Log("Locking");
+            }
+            else
+            {
+                autoLock = false;
+                RemoveLock();
+            }   
+        }
+    }
+
+    private void SetLockTo(Transform target)
+    {
+        playerCam.GetComponent<CameraControl>().SetTarget(target);
+    }
+
+    private void RemoveLock()
+    {
+        playerCam.GetComponent<CameraControl>().RemoveTarget();
+    }
+
+    private List<Transform> CheckCollisions()
+    {
+        List<Transform> nearbyEnemies = new List<Transform>();
+
+        Collider[] otherObjectsInRadius = Physics.OverlapSphere(transform.position, proximityAwareness);
+
+        foreach (var hitCollider in otherObjectsInRadius)
+        {
+            if (hitCollider.gameObject.tag == "Enemy")
+            {
+                if (Physics.Raycast(playerEyes.transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange))
+                {
+                    //Debug.Log("detected");
+                    nearbyEnemies.Add(hitCollider.transform);
+                }
+            }
+        }
+
+        return nearbyEnemies;
+    }
+
+    private void OnControllerColliderHit(ControllerColliderHit hit)
+    {
+        if (hit.collider.gameObject.name == "Sword")
+        {
+            //player take damage
+            Debug.Log("Damage taken");
+        }
+    }
 }

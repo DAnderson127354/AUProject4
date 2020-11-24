@@ -5,8 +5,9 @@ using UnityEngine.AI;
 
 public class EnemyControl : MonoBehaviour
 {
-    public Animator anim;
+    //public Animator anim;
     public NavMeshAgent agent;
+    public ButtonFunction animationControl;
 
     public float proximityAwareness;
     public float visionRange;
@@ -22,6 +23,9 @@ public class EnemyControl : MonoBehaviour
     private float movementTimer;
     private float pauseTimer;
 
+    public float pauseBtwAttackTime;
+    private float pauseBtwAttackTimer;
+
     public GameObject player;
     private bool isFollowing = false;
 
@@ -30,7 +34,8 @@ public class EnemyControl : MonoBehaviour
     {
         movementTimer = SetTimer("Movement");
         pauseTimer = SetTimer("Pause");
-        anim.SetBool("Moving", true);
+        animationControl.Walk();
+        //anim.SetBool("Moving", true);
     }
 
     // Update is called once per frame
@@ -65,14 +70,16 @@ public class EnemyControl : MonoBehaviour
         {
             agent.isStopped = true;
             pauseTimer -= Time.deltaTime;
-            anim.SetBool("Moving", false);
+            animationControl.Idle();
+            //anim.SetBool("Moving", false);
         }
         else
         {
             agent.isStopped = false;
             movementTimer = SetTimer("Movement");
             pauseTimer = SetTimer("Pause");
-            anim.SetBool("Moving", true);
+            animationControl.Walk();
+            //anim.SetBool("Moving", true);
         }
             
     }
@@ -82,6 +89,10 @@ public class EnemyControl : MonoBehaviour
         if (timer == "Movement")
         {
             return Random.Range(minMovementTime, maxMovementTime);
+        }
+        else if (timer == "AttackPause")
+        {
+            return pauseBtwAttackTime;
         }
 
         return pauseTime;
@@ -131,13 +142,29 @@ public class EnemyControl : MonoBehaviour
     {
         agent.isStopped = true;
         transform.LookAt(player.transform);
-        anim.SetTrigger("Attack1Trigger");
+        if (pauseBtwAttackTimer <= 0)
+        {
+            GetComponent<Animator>().SetTrigger("Attack1");
+            pauseBtwAttackTimer = 1;
+        }
+        else
+        {
+            animationControl.Idle();
+            pauseBtwAttackTimer -= Time.deltaTime;
+        }
+    }
+
+    public void Hit()
+    {
+        pauseBtwAttackTimer = SetTimer("AttackPause");
+        //maybe use for sound effects later?
     }
 
     private void FollowTarget(Transform target)
     {
         agent.isStopped = false;
-        anim.SetBool("Moving", true);
+        animationControl.SprintJump();
+        //anim.SetBool("Moving", true);
         agent.SetDestination(target.position);
     }
 }
