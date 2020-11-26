@@ -7,7 +7,7 @@ public class EnemyControl : MonoBehaviour
 {
     //public Animator anim;
     public NavMeshAgent agent;
-    public ButtonFunction animationControl;
+    public GameObject animationControl;
 
     public float proximityAwareness;
     public float visionRange;
@@ -34,7 +34,7 @@ public class EnemyControl : MonoBehaviour
     {
         movementTimer = SetTimer("Movement");
         pauseTimer = SetTimer("Pause");
-        animationControl.Walk();
+        animationControl.GetComponent<ButtonFunction>().Walk();
         //anim.SetBool("Moving", true);
     }
 
@@ -70,7 +70,7 @@ public class EnemyControl : MonoBehaviour
         {
             agent.isStopped = true;
             pauseTimer -= Time.deltaTime;
-            animationControl.Idle();
+            animationControl.GetComponent<ButtonFunction>().Idle();
             //anim.SetBool("Moving", false);
         }
         else
@@ -78,7 +78,7 @@ public class EnemyControl : MonoBehaviour
             agent.isStopped = false;
             movementTimer = SetTimer("Movement");
             pauseTimer = SetTimer("Pause");
-            animationControl.Walk();
+            animationControl.GetComponent<ButtonFunction>().Walk();
             //anim.SetBool("Moving", true);
         }
             
@@ -149,7 +149,7 @@ public class EnemyControl : MonoBehaviour
         }
         else
         {
-            animationControl.Idle();
+            animationControl.GetComponent<ButtonFunction>().Idle();
             pauseBtwAttackTimer -= Time.deltaTime;
         }
     }
@@ -163,7 +163,7 @@ public class EnemyControl : MonoBehaviour
     private void FollowTarget(Transform target)
     {
         agent.isStopped = false;
-        animationControl.SprintJump();
+        animationControl.GetComponent<ButtonFunction>().SprintJump();
         //anim.SetBool("Moving", true);
         agent.SetDestination(target.position);
     }
