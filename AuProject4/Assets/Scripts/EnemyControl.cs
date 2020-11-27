@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.UI;
 
 public class EnemyControl : MonoBehaviour
 {
@@ -27,7 +28,13 @@ public class EnemyControl : MonoBehaviour
     private float pauseBtwAttackTimer;
 
     public GameObject player;
+    public GameObject playerCam;
     private bool isFollowing = false;
+
+    public Slider healthBar;
+    public float health = 5f;
+    private float halfHealth;
+    private float quarterHealth;
 
     // Start is called before the first frame update
     void Start()
@@ -36,15 +43,26 @@ public class EnemyControl : MonoBehaviour
         pauseTimer = SetTimer("Pause");
         animationControl.GetComponent<ButtonFunction>().Walk();
         //anim.SetBool("Moving", true);
+        halfHealth = (health / 2);
+        quarterHealth = (health * 0.25f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isFollowing)
-            Movement();
+        healthBar.transform.LookAt(playerCam.transform);
 
-        CheckCollisions();
+        if (healthBar.value == 0)
+        {
+            gameObject.SetActive(false);
+        }
+        else
+        {
+            if (!isFollowing)
+                Movement();
+
+            CheckCollisions();
+        }        
     }
 
     private void Movement()
@@ -122,15 +140,43 @@ public class EnemyControl : MonoBehaviour
             {
                 if (Physics.Raycast(transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange))
                 {
-                    isFollowing = true;
-                    if (Vector3.Distance(transform.position, player.transform.position) <= attackRadius)
+                    if (health >= halfHealth)
                     {
-                        Attack();
+                        isFollowing = true;
+                        if (Vector3.Distance(transform.position, player.transform.position) <= attackRadius)
+                        {
+                            if (Random.Range(0, 5) >= 2)
+                                Attack();
+                            else
+                                Block();
+                        }
+                        else
+                        {
+                            FollowTarget(player.transform);
+                        }
+                    }
+                    else if (health >= quarterHealth)
+                    {
+                        isFollowing = true;
+                        if (Vector3.Distance(transform.position, player.transform.position) <= attackRadius)
+                        {
+                            if (Random.Range(0, 5) >= 4)
+                                Attack();
+                            else
+                                Block();
+                        }
+                        else
+                        {
+                            FollowTarget(player.transform);
+                        }
                     }
                     else
                     {
-                        FollowTarget(player.transform);
+                        agent.isStopped = false;
+                        animationControl.GetComponent<ButtonFunction>().SprintJump();
+                        Run();
                     }
+                    
                 }
                 else
                     isFollowing = false;
@@ -154,6 +200,12 @@ public class EnemyControl : MonoBehaviour
         }
     }
 
+    private void Block()
+    {
+        //enemy blocking
+        Debug.Log("blocking");
+    }
+
     public void Hit()
     {
         pauseBtwAttackTimer = SetTimer("AttackPause");
@@ -166,5 +218,23 @@ public class EnemyControl : MonoBehaviour
         animationControl.GetComponent<ButtonFunction>().SprintJump();
         //anim.SetBool("Moving", true);
         agent.SetDestination(target.position);
+    }
+
+    private void Run()
+    {
+        Debug.Log("run");
+        Vector3 posDiff = transform.position - player.transform.position;   //Calculates the difference in position between player and NPC
+        Vector3 destination = transform.position + posDiff; //Creates a new destination, based on the difference in position. 
+
+        agent.SetDestination(destination);  //Sets the new destination for the NPC, and actually makes it run away.
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.name == "PlayerFist")
+        {
+            health -= player.GetComponent<PlayerControl>().stength;
+            healthBar.value = health;
+        }
     }
 }

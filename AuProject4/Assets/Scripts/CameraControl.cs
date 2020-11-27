@@ -38,7 +38,7 @@ public class CameraControl : MonoBehaviour
         {
             transform.LookAt(target);
             transform.parent.transform.LookAt(target);
-            autoLockCursor.transform.position = new Vector3(target.position.x, target.position.y + 2.3f, target.position.z);
+            autoLockCursor.transform.position = new Vector3(target.position.x, target.position.y + 2.5f, target.position.z);
             autoLockCursor.transform.LookAt(transform);
         }
         

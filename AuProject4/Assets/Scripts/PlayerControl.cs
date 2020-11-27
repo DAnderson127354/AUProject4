@@ -23,6 +23,8 @@ public class PlayerControl : MonoBehaviour
     public Camera playerCam;
     public GameObject playerEyes;
 
+    public float stength = 1.5f;
+
     // Start is called before the first frame update
     void Start()
     {
