@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/Start and End Menu/Menu.unity
+    guid: 874ad69c29bafff42979fbde3ff9f47e
+  - enabled: 1
+    path: Assets/Camps/Bandit_Camp_1A.unity
+    guid: 818a1fd86a1a55349b2e7ccf229899ec
+  - enabled: 1
+    path: Assets/Start and End Menu/End Game.unity
+    guid: 7c4c276fb0a1f3f49aafc2997a7dd75b
   m_configObjects: {}
