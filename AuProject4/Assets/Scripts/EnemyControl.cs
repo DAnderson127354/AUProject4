@@ -26,6 +26,7 @@ public class EnemyControl : MonoBehaviour
 
     public float pauseBtwAttackTime;
     private float pauseBtwAttackTimer;
+    private float pauseBtwBlockTimer;
 
     public GameObject player;
     public GameObject playerCam;
@@ -35,6 +36,9 @@ public class EnemyControl : MonoBehaviour
     public float health = 5f;
     private float halfHealth;
     private float quarterHealth;
+
+    public bool isBlocking = false;
+    private bool isAttacking = false;
 
     // Start is called before the first frame update
     void Start()
@@ -52,9 +56,9 @@ public class EnemyControl : MonoBehaviour
     {
         healthBar.transform.LookAt(playerCam.transform);
 
-        if (healthBar.value == 0)
+        if (health <= 0)
         {
-            gameObject.SetActive(false);
+            GetComponent<Animator>().SetTrigger("Death");
         }
         else
         {
@@ -145,14 +149,12 @@ public class EnemyControl : MonoBehaviour
                         isFollowing = true;
                         if (Vector3.Distance(transform.position, player.transform.position) <= attackRadius)
                         {
-                            if (Random.Range(0, 5) >= 2)
-                                Attack();
-                            else
-                                Block();
+                            EngageWithPlayer(1);
                         }
                         else
                         {
                             FollowTarget(player.transform);
+                            animationControl.GetComponent<Animator>().SetBool("Circle", false);
                         }
                     }
                     else if (health >= quarterHealth)
@@ -160,20 +162,21 @@ public class EnemyControl : MonoBehaviour
                         isFollowing = true;
                         if (Vector3.Distance(transform.position, player.transform.position) <= attackRadius)
                         {
-                            if (Random.Range(0, 5) >= 4)
-                                Attack();
-                            else
-                                Block();
+                            EngageWithPlayer(4);
                         }
                         else
                         {
                             FollowTarget(player.transform);
+                            animationControl.GetComponent<Animator>().SetBool("Circle", false);
                         }
                     }
                     else
                     {
+                        animationControl.GetComponent<Animator>().SetBool("Circle", false);
                         agent.isStopped = false;
                         animationControl.GetComponent<ButtonFunction>().SprintJump();
+                        isBlocking = false;
+                        isAttacking = false;
                         Run();
                     }
                     
@@ -186,30 +189,92 @@ public class EnemyControl : MonoBehaviour
 
     private void Attack()
     {
-        agent.isStopped = true;
-        transform.LookAt(player.transform);
-        if (pauseBtwAttackTimer <= 0)
+        if (!isAttacking)
         {
-            GetComponent<Animator>().SetTrigger("Attack1");
-            pauseBtwAttackTimer = 1;
+            if (pauseBtwAttackTimer <= 0 && !isBlocking)
+            {
+                GetComponent<Animator>().SetTrigger("Attack1");
+                //isAttacking = true;
+                pauseBtwAttackTimer = 1f;
+            }
+            else
+            {
+                pauseBtwAttackTimer -= Time.deltaTime;
+            }
         }
-        else
-        {
-            animationControl.GetComponent<ButtonFunction>().Idle();
-            pauseBtwAttackTimer -= Time.deltaTime;
-        }
+        
+        
     }
 
     private void Block()
     {
         //enemy blocking
-        Debug.Log("blocking");
+        if (!isBlocking)
+        {
+            if (pauseBtwBlockTimer <= 0 && !isAttacking)
+            {
+                GetComponent<Animator>().SetTrigger("Block");
+                //isBlocking = true;
+                pauseBtwBlockTimer = GetComponent<Animator>().GetCurrentAnimatorStateInfo(1).length;
+            }
+            else
+            {
+                pauseBtwBlockTimer -= Time.deltaTime;
+            }
+        }
+        
     }
 
     public void Hit()
     {
         pauseBtwAttackTimer = SetTimer("AttackPause");
         //maybe use for sound effects later?
+    }
+
+    public void EnemyDeath()
+    {
+        gameObject.SetActive(false);
+    }
+
+    private void EngageWithPlayer(float attackLikiness)
+    {
+        transform.RotateAround(player.transform.position, Vector3.up, 20 * Time.deltaTime);
+        agent.isStopped = true;
+        animationControl.GetComponent<Animator>().SetBool("Circle", true);
+        /*transform.LookAt(player.transform);
+        animationControl.GetComponent<ButtonFunction>().Idle();*/
+
+        if (Random.Range(0, 5) >= attackLikiness)
+            Attack();
+        else
+            Block();
+
+        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(1).IsName("Block"))
+        {
+            //Debug.Log("blocking");
+            isBlocking = true;
+           // agent.isStopped = true;
+            transform.LookAt(player.transform);
+        }
+        else
+        {
+            isBlocking = false;
+            //agent.isStopped = false;
+        }
+            
+
+        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        {
+            isAttacking = true;
+           // agent.isStopped = true;
+            transform.LookAt(player.transform);
+        }
+        else
+        {
+            isAttacking = false;
+           // agent.isStopped = false;
+        }
+            
     }
 
     private void FollowTarget(Transform target)
@@ -231,7 +296,7 @@ public class EnemyControl : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "PlayerFist")
+        if (other.gameObject.name == "PlayerFist" && !isBlocking)
         {
             health -= player.GetComponent<PlayerControl>().stength;
             healthBar.value = health;
