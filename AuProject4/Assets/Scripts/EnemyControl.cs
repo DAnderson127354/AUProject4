@@ -238,11 +238,15 @@ public class EnemyControl : MonoBehaviour
 
     private void EngageWithPlayer(float attackLikiness)
     {
-        transform.RotateAround(player.transform.position, Vector3.up, 20 * Time.deltaTime);
         agent.isStopped = true;
-        animationControl.GetComponent<Animator>().SetBool("Circle", true);
-        /*transform.LookAt(player.transform);
-        animationControl.GetComponent<ButtonFunction>().Idle();*/
+
+        if (!isAttacking && !isBlocking)
+        {
+            transform.RotateAround(player.transform.position, Vector3.up, 20 * Time.deltaTime);
+            //transform.LookAt(player.transform);
+            animationControl.GetComponent<Animator>().SetBool("Circle", true);
+        }
+        
 
         if (Random.Range(0, 5) >= attackLikiness)
             Attack();
@@ -251,9 +255,11 @@ public class EnemyControl : MonoBehaviour
 
         if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(1).IsName("Block"))
         {
+            animationControl.GetComponent<Animator>().SetBool("Circle", false);
+            animationControl.GetComponent<ButtonFunction>().Idle();
             //Debug.Log("blocking");
             isBlocking = true;
-           // agent.isStopped = true;
+            // agent.isStopped = true;
             transform.LookAt(player.transform);
         }
         else
@@ -265,6 +271,7 @@ public class EnemyControl : MonoBehaviour
 
         if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
+            animationControl.GetComponent<Animator>().SetBool("Circle", false);
             isAttacking = true;
            // agent.isStopped = true;
             transform.LookAt(player.transform);
@@ -296,10 +303,15 @@ public class EnemyControl : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "PlayerFist" && !isBlocking)
+        if (other.gameObject.name == "PlayerFist")
         {
-            health -= player.GetComponent<PlayerControl>().stength;
-            healthBar.value = health;
+            if (!isBlocking)
+            {
+                health -= player.GetComponent<PlayerControl>().stength;
+                healthBar.value = health;
+            }
+            
+            GetComponent<Animator>().SetTrigger("Hit");
         }
     }
 }
