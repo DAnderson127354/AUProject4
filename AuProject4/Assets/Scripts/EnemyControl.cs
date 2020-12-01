@@ -9,6 +9,7 @@ public class EnemyControl : MonoBehaviour
     //public Animator anim;
     public NavMeshAgent agent;
     public GameObject animationControl;
+    public Transform eyes;
 
     public float proximityAwareness;
     public float visionRange;
@@ -142,8 +143,10 @@ public class EnemyControl : MonoBehaviour
         {
             if (hitCollider.gameObject.name == "Player")
             {
-                if (Physics.Raycast(transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange))
+                Debug.DrawRay(eyes.position, (hitCollider.transform.position - transform.position), Color.blue);
+                if (Physics.Raycast(eyes.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange) && hitInfo.collider.name == "Player")
                 {
+                    //Debug.Log(hitInfo.collider);
                     if (health >= halfHealth)
                     {
                         isFollowing = true;
