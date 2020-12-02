@@ -6,10 +6,11 @@ using UnityEngine.UI;
 
 public class EnemyControl : MonoBehaviour
 {
-    //public Animator anim;
+    public Animator anim;
     public NavMeshAgent agent;
-    public GameObject animationControl;
+    public ButtonFunction animationControl;
     public Transform eyes;
+    public Collider sword;
 
     public float proximityAwareness;
     public float visionRange;
@@ -46,8 +47,7 @@ public class EnemyControl : MonoBehaviour
     {
         movementTimer = SetTimer("Movement");
         pauseTimer = SetTimer("Pause");
-        animationControl.GetComponent<ButtonFunction>().Walk();
-        //anim.SetBool("Moving", true);
+        animationControl.Walk();
         halfHealth = (health / 2);
         quarterHealth = (health * 0.25f);
     }
@@ -59,7 +59,7 @@ public class EnemyControl : MonoBehaviour
 
         if (health <= 0)
         {
-            GetComponent<Animator>().SetTrigger("Death");
+            anim.SetTrigger("Death");
         }
         else
         {
@@ -93,16 +93,14 @@ public class EnemyControl : MonoBehaviour
         {
             agent.isStopped = true;
             pauseTimer -= Time.deltaTime;
-            animationControl.GetComponent<ButtonFunction>().Idle();
-            //anim.SetBool("Moving", false);
+            animationControl.Idle();
         }
         else
         {
             agent.isStopped = false;
             movementTimer = SetTimer("Movement");
             pauseTimer = SetTimer("Pause");
-            animationControl.GetComponent<ButtonFunction>().Walk();
-            //anim.SetBool("Moving", true);
+            animationControl.Walk();
         }
             
     }
@@ -157,7 +155,7 @@ public class EnemyControl : MonoBehaviour
                         else
                         {
                             FollowTarget(player.transform);
-                            animationControl.GetComponent<Animator>().SetBool("Circle", false);
+                            anim.SetBool("Circle", false);
                         }
                     }
                     else if (health >= quarterHealth)
@@ -170,14 +168,14 @@ public class EnemyControl : MonoBehaviour
                         else
                         {
                             FollowTarget(player.transform);
-                            animationControl.GetComponent<Animator>().SetBool("Circle", false);
+                            anim.SetBool("Circle", false);
                         }
                     }
                     else
                     {
-                        animationControl.GetComponent<Animator>().SetBool("Circle", false);
+                        anim.SetBool("Circle", false);
                         agent.isStopped = false;
-                        animationControl.GetComponent<ButtonFunction>().SprintJump();
+                        animationControl.SprintJump();
                         isBlocking = false;
                         isAttacking = false;
                         Run();
@@ -200,8 +198,7 @@ public class EnemyControl : MonoBehaviour
         {
             if (pauseBtwAttackTimer <= 0 && !isBlocking)
             {
-                GetComponent<Animator>().SetTrigger("Attack1");
-                //isAttacking = true;
+                anim.SetTrigger("Attack1");
                 pauseBtwAttackTimer = 1f;
             }
             else
@@ -220,9 +217,8 @@ public class EnemyControl : MonoBehaviour
         {
             if (pauseBtwBlockTimer <= 0 && !isAttacking)
             {
-                GetComponent<Animator>().SetTrigger("Block");
-                //isBlocking = true;
-                pauseBtwBlockTimer = GetComponent<Animator>().GetCurrentAnimatorStateInfo(1).length;
+                anim.SetTrigger("Block");
+                pauseBtwBlockTimer = anim.GetCurrentAnimatorStateInfo(1).length;
             }
             else
             {
@@ -238,7 +234,17 @@ public class EnemyControl : MonoBehaviour
         //maybe use for sound effects later?
     }
 
-    public void EnemyDeath()
+    public void EnableWeaponCollision()
+    {
+        sword.enabled = true;
+    }
+
+    public void DisableWeaponCollision()
+    {
+        sword.enabled = false;
+    }
+
+    public void Death()
     {
         gameObject.SetActive(false);
     }
@@ -250,8 +256,7 @@ public class EnemyControl : MonoBehaviour
         if (!isAttacking && !isBlocking)
         {
             transform.RotateAround(player.transform.position, Vector3.up, 20 * Time.deltaTime);
-            //transform.LookAt(player.transform);
-            animationControl.GetComponent<Animator>().SetBool("Circle", true);
+            anim.SetBool("Circle", true);
         }
         
 
@@ -260,10 +265,10 @@ public class EnemyControl : MonoBehaviour
         else
             Block();
 
-        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(1).IsName("Block"))
+        if (anim.GetCurrentAnimatorStateInfo(1).IsName("Block"))
         {
-            animationControl.GetComponent<Animator>().SetBool("Circle", false);
-            animationControl.GetComponent<ButtonFunction>().Idle();
+            anim.SetBool("Circle", false);
+            animationControl.Idle();
             //Debug.Log("blocking");
             isBlocking = true;
             // agent.isStopped = true;
@@ -280,9 +285,9 @@ public class EnemyControl : MonoBehaviour
         }
             
 
-        if (GetComponent<Animator>().GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
+        if (anim.GetCurrentAnimatorStateInfo(0).IsName("Attack1"))
         {
-            animationControl.GetComponent<Animator>().SetBool("Circle", false);
+            anim.SetBool("Circle", false);
             isAttacking = true;
             // agent.isStopped = true;
             Vector3 lookVector = player.transform.position - transform.position;
@@ -302,8 +307,7 @@ public class EnemyControl : MonoBehaviour
     public void FollowTarget(Transform target)
     {
         agent.isStopped = false;
-        animationControl.GetComponent<ButtonFunction>().SprintJump();
-        //anim.SetBool("Moving", true);
+        animationControl.SprintJump();
         agent.SetDestination(target.position);
     }
 
@@ -326,8 +330,8 @@ public class EnemyControl : MonoBehaviour
                 health -= player.GetComponent<PlayerControl>().stength;
                 healthBar.value = health;
             }
-            
-            GetComponent<Animator>().SetTrigger("Hit");
+
+            anim.SetTrigger("Hit");
         }
     }
 }

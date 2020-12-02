@@ -24,8 +24,12 @@ public class PlayerControl : MonoBehaviour
     public GameObject playerEyes;
 
     public float stength = 1.5f;
+    public float health = 10f;
+    public Slider healthBar;
 
-    List<Transform> nearbyEnemies;
+    List<Transform> nearbyEnemies = new List<Transform>();
+
+    private bool gameOver = false;
 
     // Start is called before the first frame update
     void Start()
@@ -36,8 +40,26 @@ public class PlayerControl : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        PlayerMovement();
-        AutoLock();
+        if (health <= 0 && !gameOver)
+        {
+            anim.SetTrigger("Death");
+            anim.SetBool("isDead", true);
+            autoLock = false;
+            RemoveLock();
+            gameOver = true;
+            healthBar.fillRect.gameObject.SetActive(false);
+        }
+        else if (health > 0 && !gameOver)
+        {
+            PlayerMovement();
+            AutoLock();
+        }
+        
+    }
+
+    public void Death()
+    {
+        Debug.Log("Game Over");
     }
 
     void PlayerMovement()
@@ -53,7 +75,11 @@ public class PlayerControl : MonoBehaviour
         float z = Input.GetAxis("Vertical");
 
         if (x != 0 || z != 0)
+        {
             anim.SetBool("Moving", true);
+            anim.SetFloat("Input Z", z);
+            anim.SetFloat("Input X", x);
+        }     
         else
             anim.SetBool("Moving", false);
 
@@ -64,7 +90,7 @@ public class PlayerControl : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Space) && canJump)
         {
             //UnityEngine.Debug.Log("jump");
-            //anim.SetTrigger("Jump");
+            anim.SetTrigger("Jump");
             playerVelocity.y = jumpHeight;
         }
 
@@ -136,6 +162,7 @@ public class PlayerControl : MonoBehaviour
             }
             else
             {
+                Debug.Log("no nearby enemies");
                 autoLock = false;
                 RemoveLock();
             }   
@@ -168,14 +195,13 @@ public class PlayerControl : MonoBehaviour
 
     private List<Transform> CheckCollisions()
     {
-        List<Transform> nearbyEnemies = new List<Transform>();
-
         Collider[] otherObjectsInRadius = Physics.OverlapSphere(transform.position, proximityAwareness);
 
         foreach (var hitCollider in otherObjectsInRadius)
         {
             if (hitCollider.gameObject.tag == "Enemy")
             {
+                Debug.DrawRay(playerEyes.transform.position, (hitCollider.transform.position - transform.position), Color.green);
                 if (Physics.Raycast(playerEyes.transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange) && (hitInfo.collider.tag == "Enemy" || hitInfo.collider.name == "Sword"))
                 {
                     //Debug.Log("detected");
@@ -183,6 +209,7 @@ public class PlayerControl : MonoBehaviour
                 }
                 else
                 {
+                    //Debug.Log("Enemy out of sight");
                     nearbyEnemies.Remove(hitCollider.transform);
                 }
             }
@@ -191,12 +218,24 @@ public class PlayerControl : MonoBehaviour
         return nearbyEnemies;
     }
 
-    private void OnControllerColliderHit(ControllerColliderHit hit)
+    private void OnTriggerEnter(Collider hit)
     {
-        if (hit.collider.gameObject.name == "Sword")
+        if (hit.gameObject.name == "Sword")
         {
             //player take damage
+            anim.SetTrigger("Hit");
+            health -= 2;
             Debug.Log("Damage taken");
+            healthBar.value = health;
+        }
+
+        if (hit.gameObject.name == "Archer-Arrow(Clone)")
+        {
+            //player take damage
+            anim.SetTrigger("Hit");
+            health--;
+            Debug.Log("Damage taken");
+            healthBar.value = health;
         }
     }
 }

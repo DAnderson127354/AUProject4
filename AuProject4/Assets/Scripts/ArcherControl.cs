@@ -128,7 +128,7 @@ public class ArcherControl : MonoBehaviour
         }
     }
 
-    public void EnemyDeath()
+    public void Death()
     {
         gameObject.SetActive(false);
     }
@@ -145,7 +145,7 @@ public class ArcherControl : MonoBehaviour
         clone.transform.LookAt(player.transform);
         clone.velocity = clone.transform.forward * arrowSpeed;
         clone.gameObject.GetComponent<ProjectileControl>().enabled = true;
-        clone.gameObject.GetComponent<SphereCollider>().enabled = true;
+        clone.gameObject.GetComponent<BoxCollider>().enabled = true;
         clone.transform.GetChild(0).transform.localEulerAngles = new Vector3(0, 73.146f, 0);
         arrow.SetActive(false);
     }

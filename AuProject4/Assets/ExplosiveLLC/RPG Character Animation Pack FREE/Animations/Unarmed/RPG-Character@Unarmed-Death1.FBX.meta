@@ -422,7 +422,7 @@ ModelImporter:
       curves: []
       events:
       - time: 1
-        functionName: EnemyDeath
+        functionName: Death
         data: 
         objectReferenceParameter: {instanceID: 0}
         floatParameter: 0
