@@ -185,7 +185,11 @@ public class EnemyControl : MonoBehaviour
                     
                 }
                 else
+                {
+                    agent.isStopped = false;
                     isFollowing = false;
+                }
+                    
             }
         }
     }
@@ -263,7 +267,11 @@ public class EnemyControl : MonoBehaviour
             //Debug.Log("blocking");
             isBlocking = true;
             // agent.isStopped = true;
-            transform.LookAt(player.transform);
+            Vector3 lookVector = player.transform.position - transform.position;
+
+            Quaternion rot = Quaternion.LookRotation(lookVector, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rot, 1 * Time.deltaTime);
+            //transform.LookAt(player.transform);
         }
         else
         {
@@ -276,8 +284,12 @@ public class EnemyControl : MonoBehaviour
         {
             animationControl.GetComponent<Animator>().SetBool("Circle", false);
             isAttacking = true;
-           // agent.isStopped = true;
-            transform.LookAt(player.transform);
+            // agent.isStopped = true;
+            Vector3 lookVector = player.transform.position - transform.position;
+
+            Quaternion rot = Quaternion.LookRotation(lookVector, Vector3.up);
+            transform.rotation = Quaternion.Slerp(transform.rotation, rot, 1 * Time.deltaTime);
+            //transform.LookAt(player.transform);
         }
         else
         {
@@ -287,7 +299,7 @@ public class EnemyControl : MonoBehaviour
             
     }
 
-    private void FollowTarget(Transform target)
+    public void FollowTarget(Transform target)
     {
         agent.isStopped = false;
         animationControl.GetComponent<ButtonFunction>().SprintJump();
@@ -298,6 +310,7 @@ public class EnemyControl : MonoBehaviour
     private void Run()
     {
         Debug.Log("run");
+
         Vector3 posDiff = transform.position - player.transform.position;   //Calculates the difference in position between player and NPC
         Vector3 destination = transform.position + posDiff; //Creates a new destination, based on the difference in position. 
 

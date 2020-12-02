@@ -36,10 +36,22 @@ public class CameraControl : MonoBehaviour
         }
         else
         {
-            transform.LookAt(target);
-            transform.parent.transform.LookAt(target);
-            autoLockCursor.transform.position = new Vector3(target.position.x, target.position.y + 2.5f, target.position.z);
-            autoLockCursor.transform.LookAt(transform);
+            if (target.gameObject.activeSelf != false)
+            {
+                transform.LookAt(target);
+                //transform.parent.transform.LookAt(target);
+                Vector3 lookVector = target.transform.position - transform.parent.transform.position;
+
+                Quaternion rot = Quaternion.LookRotation(lookVector, Vector3.up);
+                transform.parent.transform.rotation = Quaternion.Slerp(transform.parent.transform.rotation, rot, 2 * Time.deltaTime);
+                autoLockCursor.transform.position = new Vector3(target.position.x, target.position.y + 2.5f, target.position.z);
+                autoLockCursor.transform.LookAt(transform);
+            }
+            else
+            {
+                RemoveTarget();
+            }
+            
         }
         
     }

@@ -25,6 +25,8 @@ public class PlayerControl : MonoBehaviour
 
     public float stength = 1.5f;
 
+    List<Transform> nearbyEnemies;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -79,38 +81,58 @@ public class PlayerControl : MonoBehaviour
 
     private void AutoLock()
     {
+        nearbyEnemies = CheckCollisions();
+
         if (Input.GetMouseButtonDown(0))
         {
             //Debug.Log(autoLock);
-            if (autoLock)
+            if (autoLock || nearbyEnemies.Count == 0)
             {
                 autoLock = false;
                 RemoveLock();
             }
              else
-                autoLock = true;
+            {
+                if (nearbyEnemies.Count != 0)
+                {
+                    SetLockTo(nearbyEnemies[FindClosestTarget()]);
+                    autoLock = true;
+                }
+            }
+                
         }
 
         if (autoLock)
         {
-            List<Transform> nearbyEnemies = CheckCollisions();
-
+           // Debug.Log("count " + nearbyEnemies.Count);
             if (nearbyEnemies.Count != 0)
             {
-                SetLockTo(nearbyEnemies[currentTarget]);
+                if (currentTarget < 0 || currentTarget >= nearbyEnemies.Count)
+                {
+                    //Debug.Log("current target" + currentTarget);
+                    currentTarget = 0;
+                    return;
+                }
 
-                if (Input.GetKeyDown(KeyCode.Q))
+                if (nearbyEnemies.Count > 1)
                 {
-                    currentTarget = (currentTarget + 1) % nearbyEnemies.Count;
+                    if (Input.GetKeyDown(KeyCode.Q))
+                    {
+                        Debug.Log("switch");
+                        currentTarget = (currentTarget + 1) % nearbyEnemies.Count;
+                        SetLockTo(nearbyEnemies[currentTarget]);
+                    }
+                    if (Input.GetKeyDown(KeyCode.E))
+                    {
+                        Debug.Log("switch");
+                        if (currentTarget == 0)
+                            currentTarget = nearbyEnemies.Count - 1;
+                        else
+                            currentTarget--;
+
+                        SetLockTo(nearbyEnemies[currentTarget]);
+                    }
                 }
-                if (Input.GetKeyDown(KeyCode.E))
-                {
-                    if (currentTarget == 0)
-                        currentTarget = nearbyEnemies.Count - 1;
-                    else
-                        currentTarget--;
-                }
-                // Debug.Log("Locking");
             }
             else
             {
@@ -118,6 +140,20 @@ public class PlayerControl : MonoBehaviour
                 RemoveLock();
             }   
         }
+    }
+
+    private int FindClosestTarget()
+    {
+        int closest = 0;
+        foreach (Transform target in nearbyEnemies)
+        {
+            if (Vector3.Distance(target.position, transform.position) < Vector3.Distance(nearbyEnemies[closest].transform.position, transform.position))
+            {
+                closest = nearbyEnemies.IndexOf(target);
+            }
+        }
+
+        return closest;
     }
 
     private void SetLockTo(Transform target)
@@ -140,10 +176,14 @@ public class PlayerControl : MonoBehaviour
         {
             if (hitCollider.gameObject.tag == "Enemy")
             {
-                if (Physics.Raycast(playerEyes.transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange))
+                if (Physics.Raycast(playerEyes.transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange) && (hitInfo.collider.tag == "Enemy" || hitInfo.collider.name == "Sword"))
                 {
                     //Debug.Log("detected");
                     nearbyEnemies.Add(hitCollider.transform);
+                }
+                else
+                {
+                    nearbyEnemies.Remove(hitCollider.transform);
                 }
             }
         }

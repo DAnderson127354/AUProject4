@@ -34,6 +34,9 @@ public class ArcherControl : MonoBehaviour
     public GameObject arrow;
     public Transform archerHand;
 
+    private List<Collider> nearbyEnemies = new List<Collider>();
+    private bool enemiesCalled = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -53,8 +56,10 @@ public class ArcherControl : MonoBehaviour
 
             if (isFollowing)
             {
-                transform.LookAt(player.transform);
+                Vector3 lookVector = player.transform.position - transform.position;
                 
+                Quaternion rot = Quaternion.LookRotation(lookVector, Vector3.up);
+                transform.rotation = Quaternion.Slerp(transform.rotation, rot, 2 * Time.deltaTime);
                 isAttacking = anim.GetCurrentAnimatorStateInfo(0).IsName("Attack1");
                 Attack();
             }
@@ -69,17 +74,40 @@ public class ArcherControl : MonoBehaviour
 
         foreach (var hitCollider in otherObjectsInRadius)
         {
+            if (hitCollider.gameObject.tag == "Enemy" && !hitCollider.gameObject.name.Contains("Archer"))
+            {
+                if (Vector3.Distance(hitCollider.transform.position, transform.position) <= visionRange && !nearbyEnemies.Contains(hitCollider))
+                    nearbyEnemies.Add(hitCollider);
+                else if (Vector3.Distance(hitCollider.transform.position, transform.position) > visionRange && nearbyEnemies.Contains(hitCollider))
+                    nearbyEnemies.Remove(hitCollider);
+
+                //Debug.Log(nearbyEnemies.Count);
+            }
+
             if (hitCollider.gameObject.name == "Player")
             {
                 if (Physics.Raycast(eyes.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange) && hitInfo.collider.name == "Player")
                 {
                     isFollowing = true;
+                    if (!enemiesCalled && nearbyEnemies.Count > 0)
+                    {
+                        anim.SetTrigger("Point");
+                        enemiesCalled = true;
+                        foreach (Collider enemy in nearbyEnemies)
+                        {
+                            Debug.Log(enemy.gameObject.name);
+                            enemy.gameObject.GetComponent<EnemyControl>().FollowTarget(player.transform);
+                        }
+                    }
                 }
                 else
                 {
                     isFollowing = false;
+                    enemiesCalled = false;
                 }
             }
+
+            
         }
     }
 
@@ -115,7 +143,7 @@ public class ArcherControl : MonoBehaviour
         Rigidbody clone;
         clone = Instantiate(arrow.GetComponent<Rigidbody>(), arrow.transform.position, Quaternion.identity);
         clone.transform.LookAt(player.transform);
-        clone.velocity = transform.forward * arrowSpeed;
+        clone.velocity = clone.transform.forward * arrowSpeed;
         clone.gameObject.GetComponent<ProjectileControl>().enabled = true;
         clone.gameObject.GetComponent<SphereCollider>().enabled = true;
         clone.transform.GetChild(0).transform.localEulerAngles = new Vector3(0, 73.146f, 0);
