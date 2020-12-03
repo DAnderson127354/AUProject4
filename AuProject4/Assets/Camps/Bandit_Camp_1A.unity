@@ -6050,7 +6050,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 1
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 11.076, y: 0, z: 0}
 --- !u!1 &254248562
 GameObject:
@@ -11344,7 +11344,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 5
+  m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 7.158}
 --- !u!137 &512245127
 SkinnedMeshRenderer:
@@ -18554,7 +18554,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &819241904
 PrefabInstance:
@@ -23116,7 +23116,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 4
+  m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 7.157, z: 0}
 --- !u!137 &1019768775
 SkinnedMeshRenderer:
@@ -27299,7 +27299,7 @@ Transform:
   m_Children:
   - {fileID: 757668033}
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 7.158}
 --- !u!1 &1201134616
 GameObject:
@@ -34182,13 +34182,13 @@ Transform:
   m_LocalPosition: {x: -316.24, y: 7.62, z: 175.36}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
-  - {fileID: 1989598695}
   - {fileID: 252711625}
   - {fileID: 814603125}
   - {fileID: 1200747082}
   - {fileID: 1019768774}
   - {fileID: 512245126}
   - {fileID: 2023140943}
+  - {fileID: 1989598695}
   m_Father: {fileID: 0}
   m_RootOrder: 8
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -45927,7 +45927,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!65 &1989598692
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -45948,7 +45948,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1989598691}
-  m_Enabled: 1
+  m_Enabled: 0
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
@@ -46002,7 +46002,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 0
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 84.016, z: 0}
 --- !u!33 &1990347873
 MeshFilter:
@@ -47003,7 +47003,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 1465348089}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: -90, y: 0, z: 7.158}
 --- !u!137 &2023140944
 SkinnedMeshRenderer:
@@ -47157,7 +47157,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &2028624930
 MonoBehaviour:
   m_ObjectHideFlags: 0
