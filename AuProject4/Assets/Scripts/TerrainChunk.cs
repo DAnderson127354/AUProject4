@@ -51,10 +51,14 @@ public class TerrainChunk
         meshCollider = meshObject.AddComponent<MeshCollider>();
         surface = meshObject.AddComponent<NavMeshSurface>();
         meshRenderer.material = material;
+        //surface.BuildNavMesh(); 
+
 
         meshObject.transform.position = new Vector3(position.x, 0, position.y);
         meshObject.transform.parent = parent;
+        //surface.BuildNavMesh(); 
         SetVisible(false);
+        //surface.BuildNavMesh(); 
 
         lodMeshes = new LODMesh[detailLevels.Length];
         for (int i = 0; i < detailLevels.Length; i++)
