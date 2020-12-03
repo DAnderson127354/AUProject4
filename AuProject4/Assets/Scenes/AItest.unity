@@ -7681,7 +7681,7 @@ GameObject:
   - component: {fileID: 6231883374888831834}
   m_Layer: 0
   m_Name: Player
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -7743,8 +7743,8 @@ MonoBehaviour:
   gravity: -9.8
   controller: {fileID: 6231883374888831831}
   anim: {fileID: 6231883374881577954}
-  proximityAwareness: 18
-  visionRange: 18
+  proximityAwareness: 15
+  visionRange: 12
   playerCam: {fileID: 963194227}
   playerEyes: {fileID: 574291246}
   stength: 1.5
