@@ -79,6 +79,11 @@ public class PlayerControl : MonoBehaviour
             anim.SetBool("Moving", true);
             anim.SetFloat("Input Z", z);
             anim.SetFloat("Input X", x);
+
+            if (Input.GetKeyDown(KeyCode.E))
+            {
+                anim.SetTrigger("Roll");
+            }
         }     
         else
             anim.SetBool("Moving", false);
@@ -133,22 +138,27 @@ public class PlayerControl : MonoBehaviour
            // Debug.Log("count " + nearbyEnemies.Count);
             if (nearbyEnemies.Count != 0)
             {
-                if (currentTarget < 0 || currentTarget >= nearbyEnemies.Count)
+                /*if (currentTarget < 0 || currentTarget >= nearbyEnemies.Count)
                 {
-                    //Debug.Log("current target" + currentTarget);
+                    Debug.Log("current target" + currentTarget);
                     currentTarget = 0;
                     return;
-                }
+                }*/
 
                 if (nearbyEnemies.Count > 1)
                 {
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    if (Input.GetMouseButtonDown(1))
                     {
-                        Debug.Log("switch");
-                        currentTarget = (currentTarget + 1) % nearbyEnemies.Count;
+                        Debug.Log("old " + currentTarget + " total " + nearbyEnemies.Count);
+                        currentTarget = currentTarget + 1 % nearbyEnemies.Count;
+                        Debug.Log("switch " + currentTarget);
+
+                        if (currentTarget >= nearbyEnemies.Count)
+                            currentTarget = 0;
+
                         SetLockTo(nearbyEnemies[currentTarget]);
                     }
-                    if (Input.GetKeyDown(KeyCode.E))
+                    /*if (Input.GetKeyDown(KeyCode.E))
                     {
                         Debug.Log("switch");
                         if (currentTarget == 0)
@@ -157,7 +167,7 @@ public class PlayerControl : MonoBehaviour
                             currentTarget--;
 
                         SetLockTo(nearbyEnemies[currentTarget]);
-                    }
+                    }*/
                 }
             }
             else
@@ -205,12 +215,14 @@ public class PlayerControl : MonoBehaviour
                 if (Physics.Raycast(playerEyes.transform.position, (hitCollider.transform.position - transform.position), out hitInfo, visionRange) && (hitInfo.collider.tag == "Enemy" || hitInfo.collider.name == "Sword"))
                 {
                     //Debug.Log("detected");
-                    nearbyEnemies.Add(hitCollider.transform);
+                    if (!nearbyEnemies.Contains(hitCollider.transform))
+                        nearbyEnemies.Add(hitCollider.transform);
                 }
                 else
                 {
                     //Debug.Log("Enemy out of sight");
-                    nearbyEnemies.Remove(hitCollider.transform);
+                    if (nearbyEnemies.Contains(hitCollider.transform))
+                        nearbyEnemies.Remove(hitCollider.transform);
                 }
             }
         }

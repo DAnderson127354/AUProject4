@@ -50,6 +50,7 @@ public class EnemyControl : MonoBehaviour
         animationControl.Walk();
         halfHealth = (health / 2);
         quarterHealth = (health * 0.25f);
+        agent.SetDestination(routePoints[currentPoint].position);
     }
 
     // Update is called once per frame
