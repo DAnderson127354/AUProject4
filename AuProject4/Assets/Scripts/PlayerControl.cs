@@ -79,6 +79,11 @@ public class PlayerControl : MonoBehaviour
             anim.SetBool("Moving", true);
             anim.SetFloat("Input Z", z);
             anim.SetFloat("Input X", x);
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                anim.SetTrigger("Roll");
+            }
         }     
         else
             anim.SetBool("Moving", false);
