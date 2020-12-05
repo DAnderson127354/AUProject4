@@ -24,7 +24,7 @@ public class ChestOpen : MonoBehaviour
             if (other.gameObject.tag == "Player")
             {
                 anim.SetBool("Open", true);
-                Debug.Log("Nate");
+                Debug.Log("Test");
 
             }
 
