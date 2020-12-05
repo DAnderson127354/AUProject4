@@ -6,6 +6,7 @@ public class Key : MonoBehaviour
 {
 
         Animator anim;
+    public GameObject player;
 
     // Start is called before the first frame update
     void Start()
@@ -29,5 +30,11 @@ public class Key : MonoBehaviour
             }
 
         }
+
+    public void PlaceInInventory()
+    {
+        player.GetComponent<PlayerControl>().AddToInventory(gameObject);
+        gameObject.SetActive(false);
+    }
 
 }

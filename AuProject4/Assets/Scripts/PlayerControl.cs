@@ -29,6 +29,8 @@ public class PlayerControl : MonoBehaviour
 
     List<Transform> nearbyEnemies = new List<Transform>();
 
+    List<GameObject> inventory = new List<GameObject>();
+
     private bool gameOver = false;
 
     // Start is called before the first frame update
@@ -221,6 +223,12 @@ public class PlayerControl : MonoBehaviour
         }
 
         return nearbyEnemies;
+    }
+
+    public void AddToInventory(GameObject key)
+    {
+        inventory.Add(key);
+        Debug.Log(inventory.Count);
     }
 
     private void OnTriggerEnter(Collider hit)
