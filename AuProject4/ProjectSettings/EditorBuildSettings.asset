@@ -9,7 +9,7 @@ EditorBuildSettings:
     path: Assets/Start and End Menu/Menu.unity
     guid: 874ad69c29bafff42979fbde3ff9f47e
   - enabled: 1
-    path: Assets/WOOHOO/Note.unity
+    path: Assets/Start and End Menu/WOOHOO/Note.unity
     guid: 640e26b3c2940e341a34e2ba8f80cdd0
   - enabled: 1
     path: Assets/Camps/Bandit_Camp_1A.unity
