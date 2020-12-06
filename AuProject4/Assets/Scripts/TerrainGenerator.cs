@@ -106,7 +106,16 @@ public class TerrainGenerator : MonoBehaviour
         }
     }
 
-    
+    void BakeNavMesh()
+    {
+        Bounds b = new Bounds(viewerPosition, viewerPosition + new Vector2(0f, 10f));
+        List<NavMeshBuildSource> sources = new List<NavMeshBuildSource>();
+        List<NavMeshBuildMarkup> markups = new List<NavMeshBuildMarkup>();
+        NavMeshBuilder.CollectSources(b, 0, NavMeshCollectGeometry.RenderMeshes, 0, markups, sources);
+        NavMeshBuildSettings settings = NavMesh.CreateSettings();
+
+        NavMeshBuilder.BuildNavMeshData(settings, sources, b, viewerPosition, Quaternion.identity); 
+    }
 
     
 }
