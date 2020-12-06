@@ -43,6 +43,8 @@ public class CameraControl : MonoBehaviour
                 Vector3 lookVector = target.transform.position - transform.parent.transform.position;
 
                 Quaternion rot = Quaternion.LookRotation(lookVector, Vector3.up);
+                rot.x = 0;
+                rot.z = 0;
                 transform.parent.transform.rotation = Quaternion.Slerp(transform.parent.transform.rotation, rot, 2 * Time.deltaTime);
                 autoLockCursor.transform.position = new Vector3(target.position.x, target.position.y + 2.5f, target.position.z);
                 autoLockCursor.transform.LookAt(transform);
