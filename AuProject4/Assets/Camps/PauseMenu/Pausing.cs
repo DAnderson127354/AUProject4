@@ -8,7 +8,7 @@ public class Pausing : MonoBehaviour
     public GameObject pauseMenu;
     public bool isPaused;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         pauseMenu.SetActive(false);
         Cursor.lockState = CursorLockMode.None;
