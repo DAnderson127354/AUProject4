@@ -150,15 +150,15 @@ AudioSource:
   m_Enabled: 0
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
-  m_audioClip: {fileID: 8300000, guid: ec7561901f3fcc04eb1387ecc64bf583, type: 3}
+  m_audioClip: {fileID: 8300000, guid: f7bf2764b031e7145a30431f6497036a, type: 3}
   m_PlayOnAwake: 1
-  m_Volume: 1
+  m_Volume: 0.8
   m_Pitch: 1
   Loop: 1
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 100
   DopplerLevel: 1
   MinDistance: 1
   MaxDistance: 500
@@ -1277,10 +1277,11 @@ MonoBehaviour:
     m_LineSpacing: 1
   m_Text: "Traveller,\n\tI am writing to Inform you that after I returned back home
     I was attacked and robbed by bandits and had my 3 keys that I use to enter my
-    hut taken from me. I have gone into hiding and will retrun when my hut is opened
-    and my keys returned. Once I heard that the Legendary steel fist fighter was
-    here I had this note sent to you In hopes that you will be able to get my keys
-    back. In retrun for payment you can take what you want from my hut.\n                                                                            
+    magic bathroom taken from me. I have gone into hiding and will return when my
+    Magic Bathroom is opened and my keys returned. Once I heard that the Legendary
+    steel fist fighter was here I had this note sent to you In hopes that you will
+    be able to get my keys back. In return for payment you can take what you want
+    from my Magic Bathroom.\n                                                                            
     Regards\n                                                                            
     A Friend"
 --- !u!222 &1911413239
