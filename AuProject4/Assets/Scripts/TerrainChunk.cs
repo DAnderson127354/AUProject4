@@ -9,7 +9,7 @@ public class TerrainChunk
     public event System.Action<TerrainChunk, bool> onVisibilityChanged; 
     public Vector2 coord;
 
-    GameObject meshObject;
+    public GameObject meshObject;
     Vector2 sampleCenter;
     Bounds bounds;
 
