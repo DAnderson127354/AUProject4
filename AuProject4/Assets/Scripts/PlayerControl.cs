@@ -231,6 +231,11 @@ public class PlayerControl : MonoBehaviour
         Debug.Log(inventory.Count);
     }
 
+    public int GetKeyCount()
+    {
+        return inventory.Count;
+    }
+
     private void OnTriggerEnter(Collider hit)
     {
         if (hit.gameObject.name == "Sword")

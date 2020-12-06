@@ -23,8 +23,12 @@ public class HutOpen : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
-            anim.SetBool("OpenDoor", true);
-            Debug.Log("OpenDoor");
+            if (other.gameObject.GetComponent<PlayerControl>().GetKeyCount() == 3)
+            {
+                anim.SetBool("OpenDoor", true);
+                Debug.Log("OpenDoor");
+            }
+            
 
         }
 
