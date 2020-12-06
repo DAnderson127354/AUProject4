@@ -5,6 +5,11 @@ using UnityEngine.SceneManagement;
 
 public class Ending : MonoBehaviour
 {
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
     public void Mainmenu()
     {
             {

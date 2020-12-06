@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerControl : MonoBehaviour
@@ -62,6 +63,7 @@ public class PlayerControl : MonoBehaviour
     public void Death()
     {
         Debug.Log("Game Over");
+        SceneManager.LoadScene("End Game");
     }
 
     void PlayerMovement()
@@ -254,6 +256,11 @@ public class PlayerControl : MonoBehaviour
             health--;
             Debug.Log("Damage taken");
             healthBar.value = health;
+        }
+
+        if (hit.gameObject.name == "End")
+        {
+            SceneManager.LoadScene("End Game");
         }
     }
 }
